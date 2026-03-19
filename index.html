@@ -2,91 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>5-Year CGPA Tracker</title>
+<title>CGPA Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body {
-    font-family: 'Poppins', Arial, sans-serif;
-    margin:0; padding:20px;
-    min-height:100vh;
-    background: linear-gradient(-45deg, #6EE7B7, #3B82F6, #F472B6, #FACC15);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    color:#1f2937;
-}
 
-@keyframes gradientBG {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-}
-
-h1 { text-align:center; margin:30px 0; font-weight:700; color:white; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); }
-
-.level { background:  rgba(255,255,255,0.95);
-padding: 20px; margin-bottom: 25px; border-radius:20px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-width: 100%;
-max-width: 500px; margin:auto;
-}
-
-.semGPA, .yearGPA { font-weight: bold;
-color: #111827;
-margin-bottom: 10px;
-}
-
-.yearGPA { font-size: 1.15em;
-margin-top: 10px;
-}
-
-table { width: 100%;
-border-collapse: separate; border-spacing: 10px 8px;
-margin-bottom: 10px;
-border-radius: 12px; 
-verflow: hidden;
-background: rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-th, td { padding:12px 10px;  border-radius:8px;
-text-align:center;
-vertical-align:middle;
-}
-
-th { background: linear-gradient(90deg,#3B82F6,#6EE7B7); color: white;
-font-weight: 600;
-letter-spacing: 1px;
-}
-
-td input, td select { width: 60%; border-radius: 5px;
-margin:0 auto;
-text-align: left;
-padding: 5px; }
-td input.course { width: 90%; }
-td input.unit { width: 65%; }
-td select.grade { width: 70%; }
-
-.cancel-btn { display:block; margin:0 auto; background:#EF4444; font-size:12px; padding:2px 6px; border-radius:6px; border:none; cursor:pointer; }
-tr:hover td { background: rgba(59,130,246,0.08); }
-
-button { padding:8px 14px; background: linear-gradient(90deg,#10B981,#06B6D4); border:none; color:white; border-radius:12px; cursor:pointer; font-weight:600; transition:all 0.3s ease; }
-button:hover { transform:scale(1.05); box-shadow:0 4px 15px rgba(0,0,0,0.2); }
-.reset { background: linear-gradient(90deg,#EF4444,#F59E0B); margin-top:15px; }
-
-.summary { background: rgba(255,255,255,0.95); padding:30px; border-radius:20px; text-align:center; font-size:20px; box-shadow:0 10px 25px rgba(0,0,0,0.15); width:100%; max-width:500px; margin:auto; margin-bottom:40px;}
-</style>
+<link rel="stylesheet" href="cgpa.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3B82F6">
 </head>
+
 <body>
 
-<h1>5-Year CGPA Tracker</h1>
-<div id="container"></div>
+<h2 id="levelTitle">100 Level</h2>
+
+<div id="slider-wrapper">
+    <div id="container"></div>
+</div>
+
+<div id="dots"></div>
 
 <div class="summary">
-Overall CGPA: <span id="cgpa">0.00</span>
-<br><br>
-Class of Degree: <span id="degree">-</span>
-<br><br>
-<button class="reset" onclick="resetData()">Reset All</button>
+    CGPA: <span id="cgpa">0.00</span><br>
+    Degree: <span id="degree">-</span><br><br>
+    <button onclick="resetData()">Reset</button>
 </div>
 
 <script src="app.js"></script>
+
+<script>
+if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
 </body>
 </html>
