@@ -43,7 +43,7 @@ function addCourseRow(id, course="", unit="", grade="") {
 <option value="0">F</option>
 </select>
 </td>
-<td style="background-color: red; length: 50%; width: 50%;"><button class="cancel-btn" onclick="removeRow(this)">×</button></td>
+<td style="length: 50%; width: 50%;"><button class="cancel-btn" onclick="removeRow(this)">×</button></td>
 `;
 
     tbody.appendChild(row);
