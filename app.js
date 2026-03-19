@@ -43,7 +43,7 @@ function addCourseRow(id, course="", unit="", grade="") {
 <option value="0">F</option>
 </select>
 </td>
-<td><button class="cancel-btn" onclick="removeRow(this)">×</button></td>
+<td style="background-color: red;"><button class="cancel-btn" onclick="removeRow(this)">×</button></td>
 `;
 
     tbody.appendChild(row);
@@ -95,12 +95,16 @@ function calculateAll(){
     document.getElementById("cgpa").innerText = cgpa.toFixed(2);
 
     let degree="-";
-    if(cgpa>=4.5) degree="First Class";
-    else if(cgpa>=3.5) degree="Second Class Upper";
-    else if(cgpa>=2.4) degree="Second Class Lower";
-    else if(cgpa>=1.5) degree="Third Class";
-    else if(cgpa>=1.0) degree="Pass";
-    else if(cgpa>0) degree="Fail";
+    if (cgpa >= 4.5 && cgpa <= 5.0)
+  console.log("First Class");
+else if (cgpa >= 3.5 && cgpa < 4.5)
+  console.log("Second Class Upper");
+else if (cgpa >= 2.4 && cgpa < 3.5)
+  console.log("Second Class Lower");
+else if (cgpa >= 1.5 && cgpa < 2.4)
+  console.log("Third Class");
+else if (cgpa >= 0.0 && cgpa < 1.5)
+  console.log("Failed");
     document.getElementById("degree").innerText = degree;
 
     saveData();
