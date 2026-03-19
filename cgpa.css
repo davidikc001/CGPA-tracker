@@ -109,8 +109,15 @@ td input, td select {
 
 /* Custom widths */
 td input.course { width: 90%; }
-td input.unit { width: 65%; }
-td select.grade { width: 70%; }
+td input.unit { width: 70%; }
+td select.grade { width:  85%;
+padding: 8px;
+text-align: left;
+z-index: 10;
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+}
 
 /* ================== BUTTONS ================== */
 button {
