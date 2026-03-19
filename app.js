@@ -107,10 +107,10 @@ function calculateAll(){
     document.getElementById("cgpa").innerText = cgpa.toFixed(2);
 
     let degree="-";
-    if(cgpa >= 4.5) degree = "First Class";
-    else if(cgpa >= 3.5) degree = "Second Class Upper";
-    else if(cgpa >= 2.4) degree = "Second Class Lower";
-    else if(cgpa >= 1.5) degree = "Third Class";
+    if(cgpa >= 4.5) degree = "1st Class";
+    else if(cgpa >= 3.5) degree = "2nd Class Upper";
+    else if(cgpa >= 2.4) degree = "2nd Class Lower";
+    else if(cgpa >= 1.5) degree = "3rd Class";
     else degree = "Failed";
 
     document.getElementById("degree").innerText = degree;
