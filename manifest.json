@@ -1,7 +1,7 @@
 {
   "name": "5-Year CGPA Tracker",
   "short_name": "CGPA Tracker",
-  "start_url": "cgpa.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#4f46e5",
   "theme_color": "#4f46e5",
