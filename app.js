@@ -17,7 +17,7 @@ function buildInterface(){
 <th>Course</th>
 <th>Units</th>
 <th>Grade</th>
-<th></th> <!-- cancel button column -->
+<th></th>
 </tr>
 <tbody id="body_${id}"></tbody>
 </table>
