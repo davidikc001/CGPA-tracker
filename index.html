@@ -4,14 +4,10 @@
 <meta charset="UTF-8">
 <title>5-Year CGPA Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#4f46e5">
-<link rel="manifest" href="manifest.json">
 <style>
-/* ================== Background & Body ================== */
 body {
     font-family: 'Poppins', Arial, sans-serif;
-    margin:0;
-    padding:20px;
+    margin:0; padding:20px;
     min-height:100vh;
     background: linear-gradient(-45deg, #6EE7B7, #3B82F6, #F472B6, #FACC15);
     background-size: 400% 400%;
@@ -23,138 +19,29 @@ body {
     50% {background-position: 100% 50%;}
     100% {background-position: 0% 50%;}
 }
-h1 {
-    text-align:center;
-    margin:30px 0;
-    font-weight:700;
-    color:white;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-}
+h1 { text-align:center; margin:30px 0; font-weight:700; color:white; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); }
 
-/* ================== Level Cards ================== */
-.level {
-    background: rgba(255,255,255,0.95);
-    padding:20px;
-    margin-bottom:25px;
-    border-radius:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.15);
-    width: 100%;
-    max-width: 500px;
-    margin-left:auto;
-    margin-right:auto;
-}
+.level { background: rgba(255,255,255,0.95); padding:20px; margin-bottom:25px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.15); width:100%; max-width:500px; margin:auto; }
 .semGPA, .yearGPA { font-weight:bold; color:#111827; margin-bottom:10px; }
 .yearGPA { font-size:1.15em; margin-top:10px; }
 
-/* ================== Table ================== */
-table {
-    width:100%;
-    border-collapse: separate;
-    border-spacing: 10px 8px;
-    margin-bottom:10px;
-    border-radius:12px;
-    overflow:hidden;
-    background: rgba(255,255,255,0.9);
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-th, td {
-    padding:12px 10px;
-    text-align:center;
-    border-radius:8px;
-    border:1px solid rgba(0,0,0,0.12);
-}
-th {
-    background: linear-gradient(90deg,#3B82F6,#6EE7B7);
-    color:white;
-    font-weight:600;
-    letter-spacing:1px;
-}
+table { width:100%; border-collapse: separate; border-spacing: 10px 8px; margin-bottom:10px; border-radius:12px; overflow:hidden; background: rgba(255,255,255,0.9); box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+th, td { padding:12px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.12); text-align:center; vertical-align:middle; }
+th { background: linear-gradient(90deg,#3B82F6,#6EE7B7); color:white; font-weight:600; letter-spacing:1px; }
 
+td input, td select { width:60%; display:block; margin:0 auto; text-align:center; padding:6px; box-sizing:border-box; }
+td input.course { width:90%; }
+td input.unit { width:50%; }
+td select.grade { width:50%; }
+
+.cancel-btn { display:block; margin:0 auto; background:#EF4444; font-size:12px; padding:2px 6px; border-radius:6px; border:none; cursor:pointer; }
 tr:hover td { background: rgba(59,130,246,0.08); }
 
-input, select {
-    width:100%;
-    padding:8px;
-    border-radius:8px;
-    border:1px solid #9CA3AF;
-    text-align:left;
-}
-input:focus, select:focus {
-    border-color:#3B82F6;
-    box-shadow:0 0 6px rgba(59,130,246,0.4);
-    outline:none;
-}
-/* Center content in table cells */
-td {
-    text-align: center;       /* horizontal center */
-    vertical-align: middle;   /* vertical center */
-}
-
-/* Inputs and selects centered */
-td input, td select {
-    width: 60%;               /* adjust width to fit nicely */
-    display: block;           /* allows margin auto */
-    margin: 0 auto;           /* horizontal centering */
-    text-align: center;       /* text inside input/select */
-    padding: 6px;
-    box-sizing: border-box;
-}
-
-/* Different widths for each type */
-td input.course { width: 90%; }
-td input.unit { width: 50%; }
-td select.grade { width: 50%; }
-
-/* Cancel button centered */
-.cancel-btn {
-    display: block;
-    margin: 0 auto;
-    background:#EF4444;
-    font-size:12px;
-    padding:2px 6px;
-    border-radius:6px;
-    border:none;
-    cursor:pointer;
-}
-
-/* Hover effect for rows */
-tr:hover td { background: rgba(59,130,246,0.08); }
-
-/* ================== Buttons ================== */
-button {
-    padding:8px 14px;
-    background: linear-gradient(90deg,#10B981,#06B6D4);
-    border:none;
-    color:white;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:600;
-    transition: all 0.3s ease;
-}
+button { padding:8px 14px; background: linear-gradient(90deg,#10B981,#06B6D4); border:none; color:white; border-radius:12px; cursor:pointer; font-weight:600; transition:all 0.3s ease; }
 button:hover { transform:scale(1.05); box-shadow:0 4px 15px rgba(0,0,0,0.2); }
 .reset { background: linear-gradient(90deg,#EF4444,#F59E0B); margin-top:15px; }
-.cancel-btn {
-    background:#EF4444;
-    font-size:12px;
-    padding:2px 6px;
-    border-radius:6px;
-    margin-left:5px;
-}
 
-/* ================== Summary ================== */
-.summary {
-    background: rgba(255,255,255,0.95);
-    padding:30px;
-    border-radius:20px;
-    text-align:center;
-    font-size:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.15);
-    width: 100%;
-    max-width: 500px;
-    margin-left:auto;
-    margin-right:auto;
-    margin-bottom:40px;
-}
+.summary { background: rgba(255,255,255,0.95); padding:30px; border-radius:20px; text-align:center; font-size:20px; box-shadow:0 10px 25px rgba(0,0,0,0.15); width:100%; max-width:500px; margin:auto; margin-bottom:40px;}
 </style>
 </head>
 <body>
@@ -171,36 +58,5 @@ Class of Degree: <span id="degree">-</span>
 </div>
 
 <script src="app.js"></script>
-<script>
-if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("service-worker.js");
-}
-
-// Install prompt for PWA
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const btn = document.createElement('button');
-  btn.textContent = "Install CGPA Tracker";
-  btn.style.position = "fixed";
-  btn.style.bottom = "20px";
-  btn.style.right = "20px";
-  btn.style.zIndex = 1000;
-  btn.style.padding = "10px 20px";
-  btn.style.background = "#3B82F6";
-  btn.style.color = "white";
-  btn.style.borderRadius = "12px";
-  btn.style.fontWeight = "600";
-  btn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-  document.body.appendChild(btn);
-
-  btn.addEventListener('click', () => {
-    btn.remove();
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
-  });
-});
-</script>
 </body>
 </html>
