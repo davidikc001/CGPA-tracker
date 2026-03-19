@@ -8,6 +8,17 @@ body {
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     color:#1f2937;
+
+/* Flexbox for centering */
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    align-items: center;    /* horizontal center */
+}
+
+/* Optional: add spacing between sections */
+#container {
+    width: 100%;
+    max-width: 500px; /* same max width as summary */
 }
 
 @keyframes gradientBG {
