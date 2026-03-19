@@ -1,0 +1,21 @@
+{
+  "name": "5-Year CGPA Tracker",
+  "short_name": "CGPA Tracker",
+  "start_url": "cgpa.html",
+  "display": "standalone",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "description": "Track your GPA and CGPA across 5 years",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
