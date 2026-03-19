@@ -98,14 +98,22 @@ th {
 
 /* ================== INPUTS ================== */
 td input, td select {
-    width: 60%;
+    width: 80%;           /* make the box wider */
     border-radius: 8px;
     margin: 0 auto;
     display: block;
-    text-align: center;
-    padding: 6px;
+    text-align: left;     /* align text to the left so it’s always visible */
+    padding: 8px 10px;    /* give more padding inside the box */
     border: 1px solid #9CA3AF;
+    font-size: 16px;      /* make text bigger and easier to see */
+    font-weight: bold;
+    box-sizing: border-box; /* ensures padding doesn’t shrink width */
 }
+
+/* Specific widths if needed */
+td input.course { width: 90%; }
+td input.unit { width: 70%; }
+td select.grade { width: 70%; height: 40px; }
 
 /* Custom widths */
 td input.course { width: 90%; }
