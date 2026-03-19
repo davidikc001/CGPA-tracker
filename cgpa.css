@@ -195,16 +195,9 @@ tr:hover td {
     font-size:20px;
     box-shadow:0 10px 25px rgba(0,0,0,0.15);
 
-     /* Center horizontally */
-    margin-left: auto;
-    margin-right: auto;
-
-    /* Optional: set max width so it doesn’t stretch too much */
-    max-width: 500px;
-
-    /* Optional: space from top */
-    margin-top: 40px;
-    
-    /* Optional: ensure it stays block-level */
-    display: block;
+     /* horizontal centering handled by body flex */
+    width: 100%;
+    max-width: 500px; /* ensures it fits all devices */
+    margin: 20px 0;   /* vertical spacing */
+    box-sizing: border-box;
 }
