@@ -1,7 +1,7 @@
 const cacheName = 'cgpa-tracker-v1';
 const filesToCache = [
   '/',
-  '/cgpa.html',
+  '/index.html',
   '/app.js',
   '/manifest.json',
   '/service-worker.js',
