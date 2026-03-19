@@ -33,17 +33,17 @@ function addCourseRow(id, course="", unit="", grade="") {
 <td><input type="text" class="course" value="${course}" placeholder="Course Name"></td>
 <td><input type="number" class="unit" value="${unit}" placeholder="Units"></td>
 <td>
-<select class="grade">
-<option value="">--</option>
-<option value="5">A</option>
-<option value="4">B</option>
-<option value="3">C</option>
-<option value="2">D</option>
-<option value="1">E</option>
-<option value="0">F</option>
-</select>
+  <select class="grade">
+    <option value="">--</option>
+    <option value="5">A</option>
+    <option value="4">B</option>
+    <option value="3">C</option>
+    <option value="2">D</option>
+    <option value="1">E</option>
+    <option value="0">F</option>
+  </select>
 </td>
-<td><button class="cancel-btn" onclick="removeRow(this)" style="length: 50%; width: 50%;">×</button></td>
+<td><button class="cancel-btn" onclick="removeRow(this)">×</button></td>
 `;
 
     tbody.appendChild(row);
@@ -53,6 +53,7 @@ function addCourseRow(id, course="", unit="", grade="") {
     attachListeners();
     calculateAll();
     saveData();
+}
 }
 
 function removeRow(button){
