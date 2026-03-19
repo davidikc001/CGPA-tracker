@@ -13,7 +13,12 @@ function buildInterface(){
 <h3>${sem} Semester</h3>
 <div class="semGPA">Semester GPA: <span id="gpa_${id}">0.00</span></div>
 <table>
-<tr><th>Course</th><th>Units</th><th>Grade</th></tr>
+<tr>
+<th>Course</th>
+<th>Units</th>
+<th>Grade</th>
+<th></th> <!-- cancel button column -->
+</tr>
 <tbody id="body_${id}"></tbody>
 </table>
 <button onclick="addCourseRow('${id}')">Add Course</button>
@@ -53,7 +58,6 @@ function addCourseRow(id, course="", unit="", grade="") {
     attachListeners();
     calculateAll();
     saveData();
-}
 }
 
 function removeRow(button){
@@ -97,17 +101,17 @@ function calculateAll(){
 
     let degree="-";
     if (cgpa >= 4.5 && cgpa <= 5.0)
-  console.log("First Class");
-else if (cgpa >= 3.5 && cgpa < 4.5)
-  console.log("Second Class Upper");
-else if (cgpa >= 2.4 && cgpa < 3.5)
-  console.log("Second Class Lower");
-else if (cgpa >= 1.5 && cgpa < 2.4)
-  console.log("Third Class");
-else if (cgpa >= 0.0 && cgpa < 1.5)
-  console.log("Failed");
-    document.getElementById("degree").innerText = degree;
+        degree = "First Class";
+    else if (cgpa >= 3.5 && cgpa < 4.5)
+        degree = "Second Class Upper";
+    else if (cgpa >= 2.4 && cgpa < 3.5)
+        degree = "Second Class Lower";
+    else if (cgpa >= 1.5 && cgpa < 2.4)
+        degree = "Third Class";
+    else if (cgpa >= 0.0 && cgpa < 1.5)
+        degree = "Failed";
 
+    document.getElementById("degree").innerText = degree;
     saveData();
 }
 
