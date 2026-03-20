@@ -195,17 +195,18 @@ function createDots(){
 
 /* ================= SLIDE ================= */
 function updateSlide(){
-    let width = container.offsetWidth;
+    const slide = document.querySelector(".level");
+    const width = slide.offsetWidth; // correct width
 
-    container.style.transition="transform 0.4s ease";
-    container.style.transform=`translateX(-${currentIndex*width}px)`;
+    container.style.transition = "transform 0.4s ease";
+    container.style.transform = `translateX(-${currentIndex * width}px)`;
 
     document.querySelectorAll(".dot").forEach((d,i)=>{
         d.classList.toggle("active",i===currentIndex);
     });
 
     document.getElementById("levelTitle").innerText =
-        levels[currentIndex]+" Level";
+        levels[currentIndex] + " Level";
 }
 
 /* ================= SWIPE FIXED ================= */
