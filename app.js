@@ -224,13 +224,15 @@ container.addEventListener("touchstart", e=>{
 container.addEventListener("touchmove", e=>{
     if(!isDragging) return;
 
+    const slide = document.querySelector(".level");
+    const width = slide.offsetWidth;
+
     currentX = e.touches[0].clientX;
     let diff = currentX - startX;
 
     container.style.transition="none";
     container.style.transform =
-        `translateX(${(-currentIndex * const slide = document.querySelector(".level");
-const width = slide.offsetWidth;) + diff}px)`;
+        `translateX(${(-currentIndex * width) + diff}px)`;
 });
 
 container.addEventListener("touchend", ()=>{
