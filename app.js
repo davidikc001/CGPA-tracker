@@ -44,8 +44,8 @@ function addCourseRow(id, course="", unit="", grade=""){
     const row = document.createElement("tr");
 
     row.innerHTML = `
-<td><input class="course" value="${course}" placeholder="Course"></td>
-<td><input class="unit" type="number" value="${unit}" placeholder="Unit"></td>
+<td><input class="course" value="${course}"></td>
+<td><input class="unit" type="number" value="${unit}"></td>
 <td>
 <select class="grade">
 <option value="">--</option>
@@ -64,9 +64,16 @@ function addCourseRow(id, course="", unit="", grade=""){
 
     if(grade) row.querySelector(".grade").value = grade;
 
-    attachListeners();
+    // 🔥 Attach listener ONLY to this row (better performance)
+    row.querySelectorAll("input, select").forEach(el=>{
+        el.addEventListener("input", ()=>{
+            calculateAll();
+            saveData(); // ✅ SAVE IMMEDIATELY WHEN USER TYPES
+        });
+    });
+
     calculateAll();
-    saveData();
+    saveData(); // ✅ SAVE WHEN ROW IS ADDED
 }
 
 /* ================= REMOVE ================= */
@@ -85,7 +92,6 @@ function attachListeners(){
         };
     });
 }
-
 /* ================= CALCULATE ================= */
 function calculateAll(){
     let totalUnits=0, totalPoints=0;
@@ -154,16 +160,13 @@ function saveData(){
 function loadData(){
     const data = JSON.parse(localStorage.getItem("cgpaData")) || {};
 
-    for(const tbodyId in data){
+    Object.keys(data).forEach(tbodyId => {
+        const id = tbodyId.replace("body_", "");
+
         data[tbodyId].forEach(row=>{
-            addCourseRow(
-                tbodyId.replace("body_",""),
-                row.course,
-                row.unit,
-                row.grade
-            );
+            addCourseRow(id, row.course, row.unit, row.grade);
         });
-    }
+    });
 
     calculateAll();
 }
@@ -259,9 +262,10 @@ container.addEventListener("touchend", () => {
 
     updateSlide();
 });
+
+window.addEventListener("beforeunload", saveData);
+
 /* ================= INIT ================= */
 buildInterface();
-createDots();
 loadData();
-attachListeners();
-updateSlide();
+calculateAll();
