@@ -229,7 +229,8 @@ container.addEventListener("touchmove", e=>{
 
     container.style.transition="none";
     container.style.transform =
-        `translateX(${(-currentIndex * container.offsetWidth) + diff}px)`;
+        `translateX(${(-currentIndex * const slide = document.querySelector(".level");
+const width = slide.offsetWidth;) + diff}px)`;
 });
 
 container.addEventListener("touchend", ()=>{
