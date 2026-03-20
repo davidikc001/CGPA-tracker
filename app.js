@@ -4,7 +4,7 @@ const container = document.getElementById("container");
 
 let currentIndex = 0;
 
-/* BUILD UI */
+/* ================= BUILD UI ================= */
 function buildInterface(){
     levels.forEach(level=>{
         let div = document.createElement("div");
@@ -16,35 +16,36 @@ function buildInterface(){
             let id = `${level}_${sem}`;
             html += `
 <h4>${sem} Semester</h4>
-<div>GPA: <span id="gpa_${id}">0.00</span></div>
+<div class="semGPA">GPA: <span id="gpa_${id}">0.00</span></div>
 
 <table>
 <tr>
 <th>Course</th>
 <th>Unit</th>
 <th>Grade</th>
+<th></th>
 </tr>
 <tbody id="body_${id}"></tbody>
 </table>
 
-<button onclick="addCourseRow('${id}')">Add</button>
+<button onclick="addCourseRow('${id}')">Add Course</button>
 `;
         });
 
-        html += `<div>Year GPA: <span id="year_${level}">0.00</span></div>`;
+        html += `<div class="yearGPA">Year GPA: <span id="year_${level}">0.00</span></div>`;
         div.innerHTML = html;
         container.appendChild(div);
     });
 }
 
-/* ADD ROW */
+/* ================= ADD ROW ================= */
 function addCourseRow(id, course="", unit="", grade=""){
     const tbody = document.getElementById("body_" + id);
     const row = document.createElement("tr");
 
     row.innerHTML = `
-<td><input class="course" value="${course}"></td>
-<td><input class="unit" type="number" value="${unit}"></td>
+<td><input class="course" value="${course}" placeholder="Course"></td>
+<td><input class="unit" type="number" value="${unit}" placeholder="Unit"></td>
 <td>
 <select class="grade">
 <option value="">--</option>
@@ -64,16 +65,18 @@ function addCourseRow(id, course="", unit="", grade=""){
     if(grade) row.querySelector(".grade").value = grade;
 
     attachListeners();
+    calculateAll();
+    saveData();
 }
 
-/* REMOVE */
+/* ================= REMOVE ================= */
 function removeRow(btn){
     btn.closest("tr").remove();
     calculateAll();
     saveData();
 }
 
-/* LISTENERS */
+/* ================= LISTENERS ================= */
 function attachListeners(){
     document.querySelectorAll("input, select").forEach(el=>{
         el.oninput = () => {
@@ -83,7 +86,7 @@ function attachListeners(){
     });
 }
 
-/* CALCULATE */
+/* ================= CALCULATE ================= */
 function calculateAll(){
     let totalUnits=0, totalPoints=0;
 
@@ -126,7 +129,7 @@ function calculateAll(){
     document.getElementById("degree").innerText = degree;
 }
 
-/* SAVE */
+/* ================= SAVE ================= */
 function saveData(){
     const data = {};
 
@@ -147,7 +150,7 @@ function saveData(){
     localStorage.setItem("cgpaData", JSON.stringify(data));
 }
 
-/* LOAD */
+/* ================= LOAD ================= */
 function loadData(){
     const data = JSON.parse(localStorage.getItem("cgpaData")) || {};
 
@@ -165,7 +168,7 @@ function loadData(){
     calculateAll();
 }
 
-/* RESET */
+/* ================= RESET ================= */
 function resetData(){
     if(confirm("Clear all data?")){
         localStorage.removeItem("cgpaData");
@@ -173,7 +176,7 @@ function resetData(){
     }
 }
 
-/* DOTS */
+/* ================= DOTS ================= */
 function createDots(){
     const dots = document.getElementById("dots");
     levels.forEach((_,i)=>{
@@ -190,9 +193,10 @@ function createDots(){
     });
 }
 
-/* SLIDE */
+/* ================= SLIDE ================= */
 function updateSlide(){
     let width = container.offsetWidth;
+
     container.style.transition="transform 0.4s ease";
     container.style.transform=`translateX(-${currentIndex*width}px)`;
 
@@ -200,61 +204,51 @@ function updateSlide(){
         d.classList.toggle("active",i===currentIndex);
     });
 
-    document.getElementById("levelTitle").innerText = levels[currentIndex]+" Level";
-
-    resetBlur();
+    document.getElementById("levelTitle").innerText =
+        levels[currentIndex]+" Level";
 }
 
-/* SWIPE */
+/* ================= SWIPE FIXED ================= */
 let startX = 0;
+let currentX = 0;
 let isDragging = false;
 
-container.addEventListener("touchstart", e => {
-    // ❌ Ignore swipe if touching a button or input
+container.addEventListener("touchstart", e=>{
     if (e.target.closest("button") || e.target.closest("input") || e.target.closest("select")) return;
 
     startX = e.touches[0].clientX;
     isDragging = true;
 });
 
-container.addEventListener("touchmove", e => {
-    if (!isDragging) return;
+container.addEventListener("touchmove", e=>{
+    if(!isDragging) return;
 
-    let x = e.touches[0].clientX;
-    let diff = x - startX;
+    currentX = e.touches[0].clientX;
+    let diff = currentX - startX;
 
-    container.style.transition = "none";
-    container.style.transform = `translateX(${(-currentIndex * container.offsetWidth) + diff}px)`;
+    container.style.transition="none";
+    container.style.transform =
+        `translateX(${(-currentIndex * container.offsetWidth) + diff}px)`;
 });
 
-container.addEventListener("touchend", e => {
-    if (!isDragging) return;
+container.addEventListener("touchend", ()=>{
+    if(!isDragging) return;
 
-    let endX = e.changedTouches[0].clientX;
-    let diff = endX - startX;
+    let diff = currentX - startX;
 
-    if (diff < -50 && currentIndex < levels.length - 1) currentIndex++;
-    if (diff > 50 && currentIndex > 0) currentIndex--;
+    if(diff < -60 && currentIndex < levels.length-1) currentIndex++;
+    if(diff > 60 && currentIndex > 0) currentIndex--;
 
     isDragging = false;
+    currentX = 0;
+    startX = 0;
+
     updateSlide();
 });
 
-/* BLUR */
-function blurEffect(){
-    document.querySelectorAll(".level").forEach((el,i)=>{
-        el.classList.toggle("blur", i !== currentIndex);
-    });
-}
-
-function resetBlur(){
-    document.querySelectorAll(".level").forEach(el=>{
-        el.classList.remove("blur");
-    });
-}
-
-/* INIT */
+/* ================= INIT ================= */
 buildInterface();
 createDots();
 loadData();
 attachListeners();
+updateSlide();
