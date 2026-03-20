@@ -206,37 +206,37 @@ function updateSlide(){
 }
 
 /* SWIPE */
-let startX=0, currentTranslate=0, prevTranslate=0, dragging=false;
+let startX = 0;
+let isDragging = false;
 
-container.addEventListener("touchstart", e=>{
+container.addEventListener("touchstart", e => {
+    // ❌ Ignore swipe if touching a button or input
+    if (e.target.closest("button") || e.target.closest("input") || e.target.closest("select")) return;
+
     startX = e.touches[0].clientX;
-    dragging=true;
+    isDragging = true;
 });
 
-container.addEventListener("touchmove", e=>{
-    if(!dragging)return;
+container.addEventListener("touchmove", e => {
+    if (!isDragging) return;
 
     let x = e.touches[0].clientX;
-    let diff = x-startX;
+    let diff = x - startX;
 
-    currentTranslate = prevTranslate + diff;
-
-    container.style.transition="none";
-    container.style.transform=`translateX(${currentTranslate}px)`;
-
-    blurEffect();
+    container.style.transition = "none";
+    container.style.transform = `translateX(${(-currentIndex * container.offsetWidth) + diff}px)`;
 });
 
-container.addEventListener("touchend", ()=>{
-    dragging=false;
+container.addEventListener("touchend", e => {
+    if (!isDragging) return;
 
-    let moved = currentTranslate - prevTranslate;
+    let endX = e.changedTouches[0].clientX;
+    let diff = endX - startX;
 
-    if(moved < -50 && currentIndex < levels.length-1) currentIndex++;
-    if(moved > 50 && currentIndex > 0) currentIndex--;
+    if (diff < -50 && currentIndex < levels.length - 1) currentIndex++;
+    if (diff > 50 && currentIndex > 0) currentIndex--;
 
-    prevTranslate = -currentIndex * container.offsetWidth;
-
+    isDragging = false;
     updateSlide();
 });
 
