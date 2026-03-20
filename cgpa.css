@@ -47,26 +47,28 @@ h1, #levelTitle {
 }
 
 /* ================== SLIDER ================== */
+/* Wrapper */
 #slider-wrapper {
     width: 100%;
     max-width: 500px;
     overflow: hidden;
 }
 
-/* Sliding container */
+/* Slider */
 #container {
     display: flex;
     width: 100%;
 }
 
-/* Each slide */
 .level {
     min-width: 100%;
+    max-width: 500px;   /* keeps it centered in viewport */
+    margin: 0 auto;     /* horizontal centering */
+
     padding: 20px;
     background: rgba(255,255,255,0.95);
     border-radius: 20px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    margin: 0 auto; /* 🔥 keeps each slide centered */
 }
 
 /* Blur effect during swipe */
@@ -74,6 +76,9 @@ h1, #levelTitle {
     filter: blur(4px);
     opacity: 0.6;
     transform: scale(0.95);
+}
+html, body {
+    overflow-x: hidden; /* 🚫 removes sideways shift */
 }
 
 /* ================== TEXT ================== */
@@ -112,7 +117,7 @@ th {
 /* ================== INPUTS ================== */
 td input,
 td select {
-    width: 85%;          /* 🔥 FIXED visibility issue */
+    width: 85%;          /* FIXED visibility issue */
     padding: 8px;
     border-radius: 8px;
     border: 1px solid #9CA3AF;
@@ -183,7 +188,7 @@ button:hover {
     width: 100%;
     max-width: 500px;
 
-    margin: 20px auto;  /* 🔥 PERFECT CENTERING */
+    margin: 20px auto;  /* PERFECT CENTERING */
 
     text-align: center;
 
