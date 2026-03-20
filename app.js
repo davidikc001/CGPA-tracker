@@ -211,45 +211,54 @@ function updateSlide(){
 
 /* ================= SWIPE FIXED ================= */
 let startX = 0;
-let currentX = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
 let isDragging = false;
+let moved = false; // NEW (important)
 
-container.addEventListener("touchstart", e=>{
-    if (e.target.closest("button") || e.target.closest("input") || e.target.closest("select")) return;
-
+container.addEventListener("touchstart", e => {
     startX = e.touches[0].clientX;
     isDragging = true;
+    moved = false; // reset
 });
 
-container.addEventListener("touchmove", e=>{
-    if(!isDragging) return;
+container.addEventListener("touchmove", e => {
+    if (!isDragging) return;
 
-    const slide = document.querySelector(".level");
-    const width = slide.offsetWidth;
+    let x = e.touches[0].clientX;
+    let diff = x - startX;
 
-    currentX = e.touches[0].clientX;
-    let diff = currentX - startX;
+    // Only activate swipe if movement is meaningful
+    if (Math.abs(diff) > 10) {
+        moved = true;
+    }
 
-    container.style.transition="none";
-    container.style.transform =
-        `translateX(${(-currentIndex * width) + diff}px)`;
+    currentTranslate = prevTranslate + diff;
+
+    container.style.transition = "none";
+    container.style.transform = `translateX(${currentTranslate}px)`;
 });
 
-container.addEventListener("touchend", ()=>{
-    if(!isDragging) return;
-
-    let diff = currentX - startX;
-
-    if(diff < -60 && currentIndex < levels.length-1) currentIndex++;
-    if(diff > 60 && currentIndex > 0) currentIndex--;
-
+container.addEventListener("touchend", () => {
+    if (!isDragging) return;
     isDragging = false;
-    currentX = 0;
-    startX = 0;
+
+    // 🚨 KEY FIX: If no real movement → DO NOTHING (it's a tap)
+    if (!moved) return;
+
+    let movement = currentTranslate - prevTranslate;
+
+    if (movement < -50 && currentIndex < levels.length - 1) {
+        currentIndex++;
+    } 
+    else if (movement > 50 && currentIndex > 0) {
+        currentIndex--;
+    }
+
+    prevTranslate = -currentIndex * container.offsetWidth;
 
     updateSlide();
 });
-
 /* ================= INIT ================= */
 buildInterface();
 createDots();
