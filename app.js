@@ -4,7 +4,6 @@ const container = document.getElementById("container");
 
 let currentIndex = 0;
 
-/* ================= BUILD UI ================= */
 function buildInterface(){
     levels.forEach(level=>{
         let div = document.createElement("div");
@@ -38,7 +37,6 @@ function buildInterface(){
     });
 }
 
-/* ================= ADD ROW ================= */
 function addCourseRow(id, course="", unit="", grade=""){
     const tbody = document.getElementById("body_" + id);
     const row = document.createElement("tr");
@@ -64,35 +62,23 @@ function addCourseRow(id, course="", unit="", grade=""){
 
     if(grade) row.querySelector(".grade").value = grade;
 
-    // 🔥 Attach listener ONLY to this row (better performance)
     row.querySelectorAll("input, select").forEach(el=>{
-        el.addEventListener("input", ()=>{
-            calculateAll();
-            saveData(); // ✅ SAVE IMMEDIATELY WHEN USER TYPES
-        });
+        el.addEventListener("input", handleChange);
     });
 
     calculateAll();
-    saveData(); // ✅ SAVE WHEN ROW IS ADDED
 }
 
-/* ================= REMOVE ================= */
 function removeRow(btn){
     btn.closest("tr").remove();
+    handleChange();
+}
+
+function handleChange(){
     calculateAll();
     saveData();
 }
 
-/* ================= LISTENERS ================= */
-function attachListeners(){
-    document.querySelectorAll("input, select").forEach(el=>{
-        el.oninput = () => {
-            calculateAll();
-            saveData();
-        };
-    });
-}
-/* ================= CALCULATE ================= */
 function calculateAll(){
     let totalUnits=0, totalPoints=0;
 
@@ -135,7 +121,6 @@ function calculateAll(){
     document.getElementById("degree").innerText = degree;
 }
 
-/* ================= SAVE ================= */
 function saveData(){
     const data = {};
 
@@ -156,9 +141,10 @@ function saveData(){
     localStorage.setItem("cgpaData", JSON.stringify(data));
 }
 
-/* ================= LOAD ================= */
 function loadData(){
-    const data = JSON.parse(localStorage.getItem("cgpaData")) || {};
+    const data = JSON.parse(localStorage.getItem("cgpaData"));
+
+    if(!data) return;
 
     Object.keys(data).forEach(tbodyId => {
         const id = tbodyId.replace("body_", "");
@@ -167,11 +153,8 @@ function loadData(){
             addCourseRow(id, row.course, row.unit, row.grade);
         });
     });
-
-    calculateAll();
 }
 
-/* ================= RESET ================= */
 function resetData(){
     if(confirm("Clear all data?")){
         localStorage.removeItem("cgpaData");
@@ -179,27 +162,52 @@ function resetData(){
     }
 }
 
-/* ================= DOTS ================= */
-function createDots(){
-    const dots = document.getElementById("dots");
-    levels.forEach((_,i)=>{
-        let d=document.createElement("span");
-        d.className="dot";
-        if(i===0)d.classList.add("active");
+/* swipe logic unchanged */
+let startX = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let isDragging = false;
+let moved = false;
 
-        d.onclick=()=>{
-            currentIndex=i;
-            updateSlide();
-        };
+container.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+    moved = false;
+});
 
-        dots.appendChild(d);
-    });
-}
+container.addEventListener("touchmove", e => {
+    if (!isDragging) return;
 
-/* ================= SLIDE ================= */
+    let x = e.touches[0].clientX;
+    let diff = x - startX;
+
+    if (Math.abs(diff) > 10) moved = true;
+
+    currentTranslate = prevTranslate + diff;
+
+    container.style.transition = "none";
+    container.style.transform = `translateX(${currentTranslate}px)`;
+});
+
+container.addEventListener("touchend", () => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    if (!moved) return;
+
+    let movement = currentTranslate - prevTranslate;
+
+    if (movement < -50 && currentIndex < levels.length - 1) currentIndex++;
+    else if (movement > 50 && currentIndex > 0) currentIndex--;
+
+    prevTranslate = -currentIndex * container.offsetWidth;
+
+    updateSlide();
+});
+
 function updateSlide(){
     const slide = document.querySelector(".level");
-    const width = slide.offsetWidth; // correct width
+    const width = slide.offsetWidth;
 
     container.style.transition = "transform 0.4s ease";
     container.style.transform = `translateX(-${currentIndex * width}px)`;
@@ -212,60 +220,6 @@ function updateSlide(){
         levels[currentIndex] + " Level";
 }
 
-/* ================= SWIPE FIXED ================= */
-let startX = 0;
-let currentTranslate = 0;
-let prevTranslate = 0;
-let isDragging = false;
-let moved = false; // NEW (important)
-
-container.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
-    moved = false; // reset
-});
-
-container.addEventListener("touchmove", e => {
-    if (!isDragging) return;
-
-    let x = e.touches[0].clientX;
-    let diff = x - startX;
-
-    // Only activate swipe if movement is meaningful
-    if (Math.abs(diff) > 10) {
-        moved = true;
-    }
-
-    currentTranslate = prevTranslate + diff;
-
-    container.style.transition = "none";
-    container.style.transform = `translateX(${currentTranslate}px)`;
-});
-
-container.addEventListener("touchend", () => {
-    if (!isDragging) return;
-    isDragging = false;
-
-    // 🚨 KEY FIX: If no real movement → DO NOTHING (it's a tap)
-    if (!moved) return;
-
-    let movement = currentTranslate - prevTranslate;
-
-    if (movement < -50 && currentIndex < levels.length - 1) {
-        currentIndex++;
-    } 
-    else if (movement > 50 && currentIndex > 0) {
-        currentIndex--;
-    }
-
-    prevTranslate = -currentIndex * container.offsetWidth;
-
-    updateSlide();
-});
-
-window.addEventListener("beforeunload", saveData);
-
-/* ================= INIT ================= */
 buildInterface();
 loadData();
 calculateAll();
