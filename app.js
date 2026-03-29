@@ -4,6 +4,7 @@ const container = document.getElementById("container");
 
 let currentIndex = 0;
 
+/* ================= BUILD UI ================= */
 function buildInterface(){
     levels.forEach(level=>{
         let div = document.createElement("div");
@@ -37,6 +38,7 @@ function buildInterface(){
     });
 }
 
+/* ================= ADD ROW ================= */
 function addCourseRow(id, course="", unit="", grade=""){
     const tbody = document.getElementById("body_" + id);
     const row = document.createElement("tr");
@@ -62,23 +64,34 @@ function addCourseRow(id, course="", unit="", grade=""){
 
     if(grade) row.querySelector(".grade").value = grade;
 
+    // FIX: ensure all changes trigger save (input + change)
     row.querySelectorAll("input, select").forEach(el=>{
         el.addEventListener("input", handleChange);
+        el.addEventListener("change", handleChange);
     });
 
     calculateAll();
+    saveData(); // ensure new row is saved immediately
 }
 
+/* ================= REMOVE ================= */
 function removeRow(btn){
     btn.closest("tr").remove();
-    handleChange();
-}
-
-function handleChange(){
     calculateAll();
     saveData();
 }
 
+/* ================= LISTENERS ================= */
+function attachListeners(){
+    document.querySelectorAll("input, select").forEach(el=>{
+        el.oninput = () => {
+            calculateAll();
+            saveData();
+        };
+    });
+}
+
+/* ================= CALCULATE ================= */
 function calculateAll(){
     let totalUnits=0, totalPoints=0;
 
@@ -121,40 +134,55 @@ function calculateAll(){
     document.getElementById("degree").innerText = degree;
 }
 
+/* ================= SAVE ================= */
 function saveData(){
-    const data = {};
+    try{
+        const data = {};
 
-    document.querySelectorAll("tbody").forEach(tbody=>{
-        const rows = [];
+        document.querySelectorAll("tbody").forEach(tbody=>{
+            const rows = [];
 
-        tbody.querySelectorAll("tr").forEach(row=>{
-            rows.push({
-                course: row.querySelector(".course").value,
-                unit: row.querySelector(".unit").value,
-                grade: row.querySelector(".grade").value
+            tbody.querySelectorAll("tr").forEach(row=>{
+                rows.push({
+                    course: row.querySelector(".course").value,
+                    unit: row.querySelector(".unit").value,
+                    grade: row.querySelector(".grade").value
+                });
+            });
+
+            data[tbody.id] = rows;
+        });
+
+        localStorage.setItem("cgpaData", JSON.stringify(data));
+    }catch(e){
+        console.error("Save failed:", e);
+    }
+}
+
+/* ================= LOAD ================= */
+function loadData(){
+    try{
+        const raw = localStorage.getItem("cgpaData");
+        if(!raw) return;
+
+        const data = JSON.parse(raw);
+
+        Object.keys(data).forEach(tbodyId => {
+            const id = tbodyId.replace("body_", "");
+
+            data[tbodyId].forEach(row=>{
+                addCourseRow(id, row.course, row.unit, row.grade);
             });
         });
 
-        data[tbody.id] = rows;
-    });
+    }catch(e){
+        console.error("Load failed:", e);
+    }
 
-    localStorage.setItem("cgpaData", JSON.stringify(data));
+    calculateAll();
 }
 
-function loadData(){
-    const data = JSON.parse(localStorage.getItem("cgpaData"));
-
-    if(!data) return;
-
-    Object.keys(data).forEach(tbodyId => {
-        const id = tbodyId.replace("body_", "");
-
-        data[tbodyId].forEach(row=>{
-            addCourseRow(id, row.course, row.unit, row.grade);
-        });
-    });
-}
-
+/* ================= RESET ================= */
 function resetData(){
     if(confirm("Clear all data?")){
         localStorage.removeItem("cgpaData");
@@ -162,7 +190,40 @@ function resetData(){
     }
 }
 
-/* swipe logic unchanged */
+/* ================= DOTS ================= */
+function createDots(){
+    const dots = document.getElementById("dots");
+    levels.forEach((_,i)=>{
+        let d=document.createElement("span");
+        d.className="dot";
+        if(i===0)d.classList.add("active");
+
+        d.onclick=()=>{
+            currentIndex=i;
+            updateSlide();
+        };
+
+        dots.appendChild(d);
+    });
+}
+
+/* ================= SLIDE ================= */
+function updateSlide(){
+    const slide = document.querySelector(".level");
+    const width = slide.offsetWidth;
+
+    container.style.transition = "transform 0.4s ease";
+    container.style.transform = `translateX(-${currentIndex * width}px)`;
+
+    document.querySelectorAll(".dot").forEach((d,i)=>{
+        d.classList.toggle("active",i===currentIndex);
+    });
+
+    document.getElementById("levelTitle").innerText =
+        levels[currentIndex] + " Level";
+}
+
+/* ================= SWIPE FIXED ================= */
 let startX = 0;
 let currentTranslate = 0;
 let prevTranslate = 0;
@@ -181,7 +242,9 @@ container.addEventListener("touchmove", e => {
     let x = e.touches[0].clientX;
     let diff = x - startX;
 
-    if (Math.abs(diff) > 10) moved = true;
+    if (Math.abs(diff) > 10) {
+        moved = true;
+    }
 
     currentTranslate = prevTranslate + diff;
 
@@ -197,29 +260,27 @@ container.addEventListener("touchend", () => {
 
     let movement = currentTranslate - prevTranslate;
 
-    if (movement < -50 && currentIndex < levels.length - 1) currentIndex++;
-    else if (movement > 50 && currentIndex > 0) currentIndex--;
+    if (movement < -50 && currentIndex < levels.length - 1) {
+        currentIndex++;
+    } 
+    else if (movement > 50 && currentIndex > 0) {
+        currentIndex--;
+    }
 
     prevTranslate = -currentIndex * container.offsetWidth;
 
     updateSlide();
 });
 
-function updateSlide(){
-    const slide = document.querySelector(".level");
-    const width = slide.offsetWidth;
+/* FIX: save even when app is backgrounded or closed */
+window.addEventListener("beforeunload", saveData);
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+        saveData();
+    }
+});
 
-    container.style.transition = "transform 0.4s ease";
-    container.style.transform = `translateX(-${currentIndex * width}px)`;
-
-    document.querySelectorAll(".dot").forEach((d,i)=>{
-        d.classList.toggle("active",i===currentIndex);
-    });
-
-    document.getElementById("levelTitle").innerText =
-        levels[currentIndex] + " Level";
-}
-
+/* ================= INIT ================= */
 buildInterface();
 loadData();
 calculateAll();
