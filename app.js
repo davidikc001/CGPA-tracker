@@ -64,23 +64,16 @@ function addCourseRow(id, course="", unit="", grade=""){
 
     if(grade) row.querySelector(".grade").value = grade;
 
-    // FIX: ensure all changes trigger save (input + change)
     row.querySelectorAll("input, select").forEach(el=>{
         el.addEventListener("input", handleChange);
         el.addEventListener("change", handleChange);
     });
 
     calculateAll();
-    saveData(); // ensure new row is saved immediately
-}
 
-/* ================= REMOVE ================= */
-function removeRow(btn){
-    btn.closest("tr").remove();
-    calculateAll();
     saveData();
+    setTimeout(saveData, 0);
 }
-
 /* ================= LISTENERS ================= */
 function attachListeners(){
     document.querySelectorAll("input, select").forEach(el=>{
@@ -143,11 +136,12 @@ function saveData(){
             const rows = [];
 
             tbody.querySelectorAll("tr").forEach(row=>{
-                rows.push({
-                    course: row.querySelector(".course").value,
-                    unit: row.querySelector(".unit").value,
-                    grade: row.querySelector(".grade").value
-                });
+                const course = row.querySelector(".course").value;
+                const unit = row.querySelector(".unit").value;
+                const grade = row.querySelector(".grade").value;
+
+                // Save row even if empty (important fix)
+                rows.push({ course, unit, grade });
             });
 
             data[tbody.id] = rows;
