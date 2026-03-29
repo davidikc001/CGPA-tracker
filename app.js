@@ -23,7 +23,6 @@ function buildInterface(){
 <th>Course</th>
 <th>Unit</th>
 <th>Grade</th>
-<th></th>
 </tr>
 <tbody id="body_${id}"></tbody>
 </table>
