@@ -202,6 +202,7 @@ function resetData(){
         localStorage.removeItem("cgpaData");
         location.reload();
     }
+window.resetData = resetData;
 }
 
 /* ================= DOTS ================= */
