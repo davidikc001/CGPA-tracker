@@ -23,6 +23,7 @@ function buildInterface(){
 <th>Course</th>
 <th>Unit</th>
 <th>Grade</th>
+<th>Action</th>
 </tr>
 <tbody id="body_${id}"></tbody>
 </table>
@@ -40,6 +41,8 @@ function buildInterface(){
 /* ================= ADD ROW ================= */
 function addCourseRow(id, course="", unit="", grade=""){
     const tbody = document.getElementById("body_" + id);
+    if(!tbody) return;
+
     const row = document.createElement("tr");
 
     row.innerHTML = `
@@ -63,25 +66,44 @@ function addCourseRow(id, course="", unit="", grade=""){
 
     if(grade) row.querySelector(".grade").value = grade;
 
-    row.querySelectorAll("input, select").forEach(el=>{
-        el.addEventListener("input", handleChange);
-        el.addEventListener("change", handleChange);
-    });
-
     calculateAll();
-
     saveData();
     setTimeout(saveData, 0);
 }
-/* ================= LISTENERS ================= */
-function attachListeners(){
-    document.querySelectorAll("input, select").forEach(el=>{
-        el.oninput = () => {
-            calculateAll();
-            saveData();
-        };
-    });
+
+/* ================= HANDLE CHANGE ================= */
+function handleChange(){
+    calculateAll();
+    saveData();
 }
+
+/* ================= REMOVE ROW ================= */
+function removeRow(btn){
+    const row = btn.closest("tr");
+    if(row) row.remove();
+
+    calculateAll();
+    saveData();
+}
+
+/* ================= EVENT DELEGATION (FIXED) ================= */
+container.addEventListener("input", e => {
+    if (
+        e.target.classList.contains("course") ||
+        e.target.classList.contains("unit") ||
+        e.target.classList.contains("grade")
+    ) {
+        calculateAll();
+        saveData();
+    }
+});
+
+container.addEventListener("change", e => {
+    if (e.target.classList.contains("grade")) {
+        calculateAll();
+        saveData();
+    }
+});
 
 /* ================= CALCULATE ================= */
 function calculateAll(){
@@ -139,7 +161,6 @@ function saveData(){
                 const unit = row.querySelector(".unit").value;
                 const grade = row.querySelector(".grade").value;
 
-                // Save row even if empty (important fix)
                 rows.push({ course, unit, grade });
             });
 
@@ -202,8 +223,7 @@ function createDots(){
 
 /* ================= SLIDE ================= */
 function updateSlide(){
-    const slide = document.querySelector(".level");
-    const width = slide.offsetWidth;
+    const width = container.offsetWidth;
 
     container.style.transition = "transform 0.4s ease";
     container.style.transform = `translateX(-${currentIndex * width}px)`;
@@ -214,15 +234,18 @@ function updateSlide(){
 
     document.getElementById("levelTitle").innerText =
         levels[currentIndex] + " Level";
+
+    prevTranslate = -currentIndex * width;
 }
 
-/* ================= SWIPE FIXED ================= */
+/* ================= SWIPE (TOUCH + MOUSE FIXED) ================= */
 let startX = 0;
 let currentTranslate = 0;
 let prevTranslate = 0;
 let isDragging = false;
 let moved = false;
 
+/* TOUCH */
 container.addEventListener("touchstart", e => {
     startX = e.touches[0].clientX;
     isDragging = true;
@@ -235,9 +258,7 @@ container.addEventListener("touchmove", e => {
     let x = e.touches[0].clientX;
     let diff = x - startX;
 
-    if (Math.abs(diff) > 10) {
-        moved = true;
-    }
+    if (Math.abs(diff) > 10) moved = true;
 
     currentTranslate = prevTranslate + diff;
 
@@ -246,6 +267,34 @@ container.addEventListener("touchmove", e => {
 });
 
 container.addEventListener("touchend", () => {
+    handleSwipeEnd();
+});
+
+/* MOUSE (PC FIX) */
+container.addEventListener("mousedown", e => {
+    startX = e.clientX;
+    isDragging = true;
+    moved = false;
+});
+
+container.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+
+    let x = e.clientX;
+    let diff = x - startX;
+
+    if (Math.abs(diff) > 10) moved = true;
+
+    currentTranslate = prevTranslate + diff;
+
+    container.style.transition = "none";
+    container.style.transform = `translateX(${currentTranslate}px)`;
+});
+
+container.addEventListener("mouseup", handleSwipeEnd);
+container.addEventListener("mouseleave", () => isDragging = false);
+
+function handleSwipeEnd(){
     if (!isDragging) return;
     isDragging = false;
 
@@ -253,19 +302,13 @@ container.addEventListener("touchend", () => {
 
     let movement = currentTranslate - prevTranslate;
 
-    if (movement < -50 && currentIndex < levels.length - 1) {
-        currentIndex++;
-    } 
-    else if (movement > 50 && currentIndex > 0) {
-        currentIndex--;
-    }
-
-    prevTranslate = -currentIndex * container.offsetWidth;
+    if (movement < -50 && currentIndex < levels.length - 1) currentIndex++;
+    else if (movement > 50 && currentIndex > 0) currentIndex--;
 
     updateSlide();
-});
+}
 
-/* FIX: save even when app is backgrounded or closed */
+/* ================= SAVE ON EXIT ================= */
 window.addEventListener("beforeunload", saveData);
 document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
@@ -273,7 +316,13 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
+/* ================= GLOBAL FIX ================= */
+window.addCourseRow = addCourseRow;
+window.removeRow = removeRow;
+
 /* ================= INIT ================= */
 buildInterface();
 loadData();
 calculateAll();
+createDots();
+updateSlide();
